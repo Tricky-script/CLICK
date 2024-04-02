@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>鸡蛋点击[Releaes]</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            text-align: center;
+            background-color: #f7f7f7;
+            margin: 0;
+            padding: 20px;
+        }
+        #egg {
+            width: 100px;
+            height: 100px;
+            background-color: #ffdf00;
+            border-radius: 50%;
+            margin: 10px auto;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        #egg:hover {
+            background-color: #ffdf00cc;
+        }
+        #stats, #store {
+            margin-top: 20px;
+        }
+        button {
+            padding: 10px 20px;
+            margin: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            border: none;
+            background-color: #4CAF50;
+            color: white;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+    <div id="egg">鸡蛋</div>
+    <div id="stats">
+        <p>点击数: <span id="clicks">0</span></p>
+        <p>自动点击器等级: <span id="autoClickerLevel">0</span></p>
+    <div id="store">
+        <h2>商店</h2>
+        <button id="upgradeAutoClicker">升级自动点击器 (花费: 100 点击数)</button>
+    </div>
+
+    <audio id="clickSound" src="click.mp3" preload="auto"></audio>
+
+    <script>
+        var egg = document.getElementById('egg');
+        var clicksDisplay = document.getElementById('clicks');
+        var autoClickerLevelDisplay = document.getElementById('autoClickerLevel');
+        var auntLevelDisplay = document.getElementById('auntLevel');
+        var clickSound = document.getElementById('clickSound');
+        var autoClickSpeed = 1;
+        var auntClicksPerSecond = 10;
+        var autoClickInterval;
+        var autoClickerLevel = 0;
+        var auntLevel = 0;
+        var autoClickerActive = false;
+
+        function updateClicks() {
+            var newClicks = parseInt(clicksDisplay.innerText);
+            newClicks++;
+            clicksDisplay.innerText = newClicks;
+        }
+
+        egg.addEventListener('click', function() {
+            updateClicks();
+            clickSound.play();
+        });
+
+        function startAutoClicker() {
+            if (!autoClickerActive && autoClickerLevel > 0) {
+                autoClickerActive = true;
+                autoClickInterval = setInterval(function() {
+                    updateClicks();
+                }, 1000 / (autoClickSpeed * autoClickerLevel));
+            }
+        }
+
+        function stopAutoClicker() {
+            if (autoClickerActive) {
+                autoClickerActive = false;
+                clearInterval(autoClickInterval);
+            }
+        }
+
+        var upgradeAutoClickerButton = document.getElementById('upgradeAutoClicker');
+        upgradeAutoClickerButton.addEventListener('click', function() {
+            if (clicksDisplay.innerText >= 100 && autoClickerLevel < 1) {
+                clicksDisplay.innerText -= 100;
+                autoClickerLevel++;
+                autoClickerLevelDisplay.innerText = autoClickerLevel;
+                upgradeAutoClickerButton.innerText = '再次升级自动点击器 (花费: 100 点击数)';
+                startAutoClicker();
+            } else if (clicksDisplay.innerText >= 100 && autoClickerLevel > 0) {
+                clicksDisplay.innerText -= 100;
+                autoClickerLevel++;
+                autoClickSpeed++;
+                autoClickerLevelDisplay.innerText = autoClickerLevel;
+                upgradeAutoClickerButton.innerText = '再次升级自动点击器 (花费: 100 点击数)';
+                startAutoClicker();
+            } else {
+                alert('点击数不够或自动点击器已升级！');
+            }
+        });
+
+        // 初始化自动点击器
+        if (autoClickerLevel > 0) {
+            startAutoClicker();
+        }
+    </script>
+</body>
+</html>
